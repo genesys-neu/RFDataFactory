@@ -84,7 +84,7 @@ def create_dataset(mat_address, pkl_path, sigmf_address, distance_list, device_l
         json_path = os.path.join(sigmf_address, json_name)
         with open (json_path, 'r') as handle:
             meta = json.load(handle)
-        label[file] = device_list.index(meta['annotations']['transmitter']['core:'+symbolic_transmitter_key])
+        label_list[file] = device_list.index(meta['annotations']['transmitter']['core:'+symbolic_transmitter_key])
 
 
     with open (pkl_path+'label.pkl','wb') as handle:
