@@ -12,7 +12,7 @@ distance_list = ['6ft','9ft','12ft','15ft']
 uav_list = []
 for i in range(len(device_list)):
     uav_list.append('uav'+str(i+1))
-print uav_list
+print(uav_list)
 
 
 cf_dict = {'m1008_6ft':'2476500000', 'm1008_9ft':'2406500000', 'm1008_12ft':'2406500000', 'm1008_15ft':'2406500000', 'm1009_6ft':'2426500000', 'm1009_9ft':'2426500000', 'm1009_12ft':'2426500000', 'm1009_15ft':'2436500000', 'm1007_6ft':'2476500000', 'm1007_9ft':'2476500000', 'm1007_12ft':'2476500000', 'm1007_15ft':'2476500000', 'm1005_6ft':'2406500000', 'm1005_9ft':'2406500000', 'm1005_12ft':'2406500000', 'm1005_15ft':'2406500000', 'm10011_6ft':'2416500000', 'm10011_9ft':'2416500000', 'm10011_12ft':'2416500000', 'm10011_15ft':'2416500000', 'm1001_6ft':'2406500000', 'm1001_9ft':'2406500000', 'm1001_12ft':'2406500000', 'm1001_15ft':'2406500000', 'm10010_6ft':'2406500000', 'm10010_9ft':'2406500000', 'm10010_12ft':'2406500000', 'm10010_15ft':'2416500000'}
@@ -42,7 +42,7 @@ def convert_mat_to_sigmf(sigmf_path, mat_path):
         len_seq=seq.shape[1]
         binary_array = np.zeros((2*len_seq),dtype=np.float16)
         current_bin_index = 0
-        print seq
+        print(seq)
         #print seq.shape
                         
         #----------------------------------------------------------------------- 
@@ -132,11 +132,11 @@ def convert_bin_to_mat(sigmf_path, mat_path):
         # do this only if you have a .bin file not a .json file
         if filepath.endswith('.bin'):
             # read the .bin file
-            with open (filepath,'rb') as handle:
+            with open(filepath, 'rb') as handle:
                 iq_seq = np.fromfile(handle, dtype='<f2')    # (f2 => float16)
             n_samples = iq_seq.shape[0]/2
             # separate I and Q
-            IQ_data = np.zeros((n_samples,2),dtype=np.float16)
+            IQ_data = np.zeros((int(n_samples), 2), dtype=np.float16)
             IQ_data[:,0] = iq_seq[range(0, iq_seq.shape[0]-1, 2)]    # load all I-values in dimension 0
             IQ_data[:,1] = iq_seq[range(1, iq_seq.shape[0], 2)]      # ...and Q-values in dimension 1
             # convert to Complex I/Q
