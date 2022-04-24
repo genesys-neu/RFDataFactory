@@ -45,6 +45,7 @@ if __name__ == '__main__':
     # initialize:
     args = parser.parse_args()
     if args.id_gpu >= 0:
+        # print('GPU arg is {}'.format(args.id_gpu))
         os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
         # The GPU id to use
         os.environ["CUDA_VISIBLE_DEVICES"] = str(args.id_gpu)
@@ -55,6 +56,7 @@ if __name__ == '__main__':
         args.labels = pkl.load(handle)
     with open(os.path.join(args.partition_path,'device_ids.pkl'),'rb') as handle:
         args.device_ids = pkl.load(handle)
+    # print('Device ids {}'.format(args.device_ids))
     
     with open(os.path.join(args.partition_path,'partition.pkl'),'rb') as handle:
         partitions = pkl.load(handle)
@@ -65,7 +67,7 @@ if __name__ == '__main__':
     model = create_model(args)
     model.summary()
 
-    model.compile(loss='categorical_crossentropy', optimizer=Adam(lr=0.0001), metrics=['accuracy'])
+    model.compile(loss='categorical_crossentropy', optimizer=Adam(learning_rate=0.0001), metrics=['accuracy'])
     
     # train the model if train is true
     if args.train:
