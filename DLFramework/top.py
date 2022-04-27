@@ -19,6 +19,10 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 if __name__ == '__main__':
+
+    os.environ['TF_GPU_ALLOCATOR'] = 'cuda_malloc_async'
+    os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+
     parser = argparse.ArgumentParser(description = 'Train and validation pipeline',formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('--exp_name', default='exp1', type=str, help='experiment name')
