@@ -27,10 +27,10 @@ def train_model(args, model):
     call_backs.append(checkpoint)
 
     if args.early_stopping:
-        earlystop_callback = EarlyStopping(monitor='val_acc', min_delta=0, patience=args.patience, verbose=2, mode='auto')
+        earlystop_callback = EarlyStopping(monitor='val_accuracy', min_delta=0, patience=args.patience, verbose=2, mode='auto')
         call_backs.append(earlystop_callback)
             
-        model.fit_generator(generator=train_generator, validation_data=val_generator, use_multiprocessing=False, 
+        model.fit_generator(generator=train_generator, validation_data=val_generator, use_multiprocessing=False,
                 max_queue_size=100, shuffle=False, epochs=args.epochs, callbacks=call_backs, initial_epoch=0, verbose = 2)
 
     # save the final model right before exiting

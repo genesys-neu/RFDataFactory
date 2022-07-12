@@ -5,6 +5,7 @@ import collections
 import numpy as np
 from tqdm import tqdm
 
+
 def test_model(args, model):
 
     # initialize:
@@ -40,7 +41,7 @@ def test_model(args, model):
                 X[i,:,:] = data[i:i+args.slice_size,:]
 
             # prepare true index:
-            true_index = args.device_ids[args.labels[ex]]
+            true_index = list(args.device_ids)[args.labels[ex]]
 
             preds = model.predict(X, batch_size=args.batch_size)
 

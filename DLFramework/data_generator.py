@@ -9,7 +9,7 @@ import os
 import math
 import collections
 
-class IQDataGenerator(keras.utils.Sequence):
+class IQDataGenerator(keras.utils.all_utils.Sequence):
 
     def __init__(self, ex_list, args):
 
@@ -19,6 +19,7 @@ class IQDataGenerator(keras.utils.Sequence):
 
         # load all data to cache:
         print('Adding all files to cache')
+
         for ex in tqdm(self.ex_list):
             this_ex = loadmat(ex)['f_sig']
            
@@ -26,19 +27,20 @@ class IQDataGenerator(keras.utils.Sequence):
                 data = np.zeros((this_ex.shape[1],2),dtype=self.args.dtype)
                 data[:,0] = np.real(this_ex[0,:])
                 data[:,1] = np.imag(this_ex[0,:])
+
                 self.__add_to_cache(ex, data)
         
         # update ex_list to contain only examples with length >= slice_size
-        print 'length of ex_list before and after:'
-        print len(self.ex_list)
+        print ('length of ex_list before and after:')
+        print (len(self.ex_list))
         self.ex_list = self.data_cache.keys()
-        print len(self.ex_list)
+        print (len(self.ex_list))
      
     def __len__(self):
         # calculate total number of batches:
         total_slice_cnt = len(self.ex_list)*(self.args.stats['avg_samples']-self.args.slice_size+1)
         batch_cnt = (math.ceil(total_slice_cnt/self.args.batch_size))/float(self.args.slice_size)
-        print 'total number of batches are: '+str(int(batch_cnt))
+        print ('total number of batches are: '+str(int(batch_cnt)))
         return int(batch_cnt)
 
     def __add_to_cache(self, ex, data):
@@ -46,7 +48,8 @@ class IQDataGenerator(keras.utils.Sequence):
         if self.args.normalize:
             data = (data - self.args.stats['mean']) / self.args.stats['std']
 
-        device_id = self.args.device_ids[self.args.labels[ex]]
+        device_id = self.args.labels[ex]
+        # device_id = self.args.device_ids[self.args.labels[ex]]
         self.data_cache[ex] = (data,device_id)
    
     def __getitem__(self, index):
@@ -60,8 +63,8 @@ class IQDataGenerator(keras.utils.Sequence):
         cnt = 0
         for ex_index in ex_indices:
             
-            this_ex = self.data_cache[self.ex_list[ex_index]][0]
-            this_class_index = self.data_cache[self.ex_list[ex_index]][1]
+            this_ex = self.data_cache[list(self.ex_list)[ex_index]][0]
+            this_class_index = self.data_cache[list(self.ex_list)[ex_index]][1]
 
             # slicing:
             slice_index = random.randint(0, this_ex.shape[0] - self.args.slice_size)
@@ -74,8 +77,9 @@ class IQDataGenerator(keras.utils.Sequence):
         
         return X, y
 
+
 if __name__ == "__main__":
-    base_path = '/home/nasim/UWBDataSet/PklFiles/NewDeviceDetection/Day11_2m_new_device/' 
+    base_path = '/home/jgroen/RFDataFactory/pkls_new'
     stats_path = base_path
     class Employee:
         pass
@@ -95,11 +99,11 @@ if __name__ == "__main__":
     args.normalize = True
     args.batch_size = 256
     args.slice_size = 32
-    args. num_classes = 4
+    args.num_classes = 4
     args.device_ids = device_ids
-    args.labels= labels
+    args.labels = labels
     args.stats = stats
 
     DG = IQDataGenerator(ex_list, args)
 
-    print DG.__getitem__(0)
+    print (DG.__getitem__(0))

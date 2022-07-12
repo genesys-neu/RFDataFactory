@@ -1,10 +1,10 @@
 import argparse
 from keras.callbacks import TensorBoard
 from time import time
-from keras.utils import plot_model
+from keras.utils.vis_utils import plot_model
 import os
 import pickle
-from keras.optimizers import Adam
+from tensorflow.keras.optimizers import Adam
 
 from create_model import *
 from train_model import *
@@ -19,6 +19,10 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 if __name__ == '__main__':
+
+    os.environ['TF_GPU_ALLOCATOR'] = 'cuda_malloc_async'
+    os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+
     parser = argparse.ArgumentParser(description = 'Train and validation pipeline',formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('--exp_name', default='exp1', type=str, help='experiment name')
@@ -45,6 +49,7 @@ if __name__ == '__main__':
     # initialize:
     args = parser.parse_args()
     if args.id_gpu >= 0:
+        # print('GPU arg is {}'.format(args.id_gpu))
         os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
         # The GPU id to use
         os.environ["CUDA_VISIBLE_DEVICES"] = str(args.id_gpu)
@@ -55,17 +60,18 @@ if __name__ == '__main__':
         args.labels = pkl.load(handle)
     with open(os.path.join(args.partition_path,'device_ids.pkl'),'rb') as handle:
         args.device_ids = pkl.load(handle)
+    # print('Device ids {}'.format(args.device_ids))
     
     with open(os.path.join(args.partition_path,'partition.pkl'),'rb') as handle:
         partitions = pkl.load(handle)
     print('train/val/test partitions have this many examples:')
-    print len(partitions['train']), len(partitions['val']), len(partitions['test'])
+    print(len(partitions['train']), len(partitions['val']), len(partitions['test']))
 
     # create the model
     model = create_model(args)
     model.summary()
 
-    model.compile(loss='categorical_crossentropy', optimizer=Adam(lr=0.0001), metrics=['accuracy'])
+    model.compile(loss='categorical_crossentropy', optimizer=Adam(learning_rate=0.0001), metrics=['accuracy'])
     
     # train the model if train is true
     if args.train:
